@@ -6,7 +6,7 @@ test("requirements", function() {
 });
 
 test("cholesky", function() {
-    expect(7);
+    expect(8);
 
     var m = $M([[1,0],[0,1]]);
     same(cholesky(m), m);
@@ -33,4 +33,7 @@ test("cholesky", function() {
 
     var nonhermitian = function() { cholesky($M([[1,2,3],[4,5,6],[7,8,9]])); }
     ok(exc(nonhermitian), "fail on a nonhermitian matrix");
+
+    var nonpositive = function() { cholesky($M([[4,2,-2],[2,1,-1],[-2,-1,10]])); }
+    ok(exc(nonpositive), "fail on a matrix that's not positive definite");
 });
