@@ -23,14 +23,21 @@ $(document).ready(function(){
     function plot_arr(a) {
         var idxs = []
         for (var i=0; i < a.length; i++) {
-            idxs.push(i);
+            idxs.push(i-50);
         }
         idxs = idxs.join(",");
         a = idxs + "|" + a.join(",");
         deleteme = a;
 
         var img = document.createElement("IMG");
-        var src = "http://chart.apis.google.com/chart?cht=s&chs=500x200&chm=o,3399cc,0,1,3&chds=0,100,0,600&chd=t:" 
+        //var src = "http://chart.apis.google.com/chart?cht=s&chs=500x200&chm=o,3399cc,0,1,3&chds=-50,50,0,600&chxt=x,y&chd=t:" 
+        var src = "http://chart.apis.google.com/chart?cht=s&chs=500x200&";
+        src += "chm=o,3399cc,0,1,3&";
+        //the axes don't line up to actual numbers, you need to take
+        //care of that yourself.
+        src += "chxt=x,y&chxl=0:|-50|0|50|1:|0|300|600&";
+        src += "chds=-50,50,0,600&";
+        src += "chd=t:";
         img.src = src + a;
         document.getElementById('chart').appendChild(img);
     }
