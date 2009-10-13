@@ -21,3 +21,12 @@ function NormalDistribution(sigma, mu) {
     });
 }
 
+function MultivariateDistribution(weights, mus, variances) {
+    return new Object({
+        weights: weights,
+        mus: mus,
+        variances: variances,
+        sample: function(n) {
+        }
+    });
+}
