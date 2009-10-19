@@ -29,7 +29,8 @@ function gaussian_dist_sanity_check() {
 
     var r = Raphael("gaussian", 500, 500);
     //TODO could do a scatter chart that accepts x,y pairs
-    opts = {nostroke: true, axis: "0 0 1 1", symbol: "o"};
+    opts = {nostroke: true, axis: "0 0 1 1", symbol: "o",
+            axminx: .8, axmaxx: 1.2, axminy: .8, axmaxy: 1.2};
     r.g.linechart(20,0,400,400, xs, ys, opts);
 }
 
