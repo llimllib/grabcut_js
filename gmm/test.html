@@ -1,8 +1,20 @@
 <html><head><title>gmm test</title>
+<script type="text/javascript" src="../sylvester/lib/sylvester.js"></script>
+<script type="text/javascript" src="../linalg/cholesky.js"></script>
 <script type="text/javascript" src="gmm.js"></script>
 <script type="text/javascript" src="jquery-1.3.2.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){ 
+    normal_dist_sanity_check();
+
+}); 
+
+function gaussian_dist_sanity_check() {
+    var t = TwoDDistribution(1, [1,1], [1,1]);
+}
+
+//TODO: compare to numpy; does it converge on a bell curve at the same n?
+function normal_dist_sanity_check() {
     function bucketize(a) {
         var buckets = [];
         for (var i=0; i < 100; i++) {
@@ -30,7 +42,6 @@ $(document).ready(function(){
         deleteme = a;
 
         var img = document.createElement("IMG");
-        //var src = "http://chart.apis.google.com/chart?cht=s&chs=500x200&chm=o,3399cc,0,1,3&chds=-50,50,0,600&chxt=x,y&chd=t:" 
         var src = "http://chart.apis.google.com/chart?cht=s&chs=500x200&";
         src += "chm=o,3399cc,0,1,3&";
         //the axes don't line up to actual numbers, you need to take
@@ -54,7 +65,7 @@ $(document).ready(function(){
     buckets = bucketize(x);
 
     plot_arr(buckets);
-}); 
+}
 </script>
 </head>
 <body>
