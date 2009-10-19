@@ -46,6 +46,9 @@ function TwoDDistribution(weight, mus, variances) {
             return a;
         },
 
+        //XXX: this is the "full", the "diag" is the one that needs the
+        //     cholesky. Implement that? Why/why not? Is this a real
+        //     gaussian? How to tell?
         sample: function(n) {
             //the first thing we do is generate a vector of n random variables
             var x = this.randn(n);

@@ -1,16 +1,36 @@
 <html><head><title>gmm test</title>
 <script type="text/javascript" src="../sylvester/lib/sylvester.js"></script>
 <script type="text/javascript" src="../linalg/cholesky.js"></script>
+<script type="text/javascript" src="../g.raphael/raphael.js"></script>
+<script type="text/javascript" src="../g.raphael/g.raphael.js"></script>
+<script type="text/javascript" src="../g.raphael/g.line.js"></script>
 <script type="text/javascript" src="gmm.js"></script>
 <script type="text/javascript" src="jquery-1.3.2.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){ 
-    normal_dist_sanity_check();
-
-}); 
+    //normal_dist_sanity_check();
+    gaussian_dist_sanity_check();
+});
 
 function gaussian_dist_sanity_check() {
+    //var weight = eval($("weight").value);
+    //var mus = eval($("mus").value);
+    //var vars = eval($("vars").value);
+    //console.log("weight: ", weight, $("weight"));
+    //var t = TwoDDistribution(weight, mus, vars);
     var t = TwoDDistribution(1, [1,1], [1,1]);
+    var ss = t.sample(1000);
+    var xs = [];
+    var ys = [];
+    for (s=0; s<ss.length; s++) {
+        xs.push(ss[s][0]);
+        ys.push(ss[s][1]);
+    }
+
+    var r = Raphael("gaussian", 500, 500);
+    //TODO could do a scatter chart that accepts x,y pairs
+    opts = {nostroke: true, axis: "0 0 1 1", symbol: "o"};
+    r.g.linechart(20,0,400,400, xs, ys, opts);
 }
 
 //TODO: compare to numpy; does it converge on a bell curve at the same n?
@@ -69,7 +89,12 @@ function normal_dist_sanity_check() {
 </script>
 </head>
 <body>
-<div id="chart">
+<div id="test_gaussian">
+<div id="gaussian" style="float:left"> </div>
+weight:<input type="text" id="weight" value="1"></input><br>
+mus: <input type="text" id="mus" value="[1,1]"></input><br>
+vars: <input type="text" id="vars" value="[1,1]"></input><br>
 </div>
+<div id="chart"> </div>
 </body>
 </html>
