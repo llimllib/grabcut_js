@@ -49,7 +49,11 @@ Raphael.fn.g.linechart = function (x, y, width, height, valuesx, valuesy, opts) 
         columns = null,
         dots = null,
         chart = this.set(),
-        path = [];
+        path = [],
+        axminx = opts.axminx || minx,
+        axmaxx = opts.axmaxx || maxx,
+        axminy = opts.axminy || miny,
+        axmaxy = opts.axmaxy || maxy;
 
     for (var i = 0, ii = valuesy.length; i < ii; i++) {
         len = Math.max(len, valuesy[i].length);
@@ -70,10 +74,10 @@ Raphael.fn.g.linechart = function (x, y, width, height, valuesx, valuesy, opts) 
     var axis = this.set();
     if (opts.axis) {
         var ax = (opts.axis + "").split(/[,\s]+/);
-        +ax[0] && axis.push(this.g.axis(x + gutter, y + gutter, width - 2 * gutter, minx, maxx, opts.axisxstep || Math.floor((width - 2 * gutter) / 20), 2));
-        +ax[1] && axis.push(this.g.axis(x + width - gutter, y + height - gutter, height - 2 * gutter, miny, maxy, opts.axisystep || Math.floor((height - 2 * gutter) / 20), 3));
-        +ax[2] && axis.push(this.g.axis(x + gutter, y + height - gutter, width - 2 * gutter, minx, maxx, opts.axisxstep || Math.floor((width - 2 * gutter) / 20), 0));
-        +ax[3] && axis.push(this.g.axis(x + gutter, y + height - gutter, height - 2 * gutter, miny, maxy, opts.axisystep || Math.floor((height - 2 * gutter) / 20), 1));
+        +ax[0] && axis.push(this.g.axis(x + gutter, y + gutter, width - 2 * gutter, axminx, axmaxx, opts.axisxstep || Math.floor((width - 2 * gutter) / 20), 2));
+        +ax[1] && axis.push(this.g.axis(x + width - gutter, y + height - gutter, height - 2 * gutter, axminy, axmaxy, opts.axisystep || Math.floor((height - 2 * gutter) / 20), 3));
+        +ax[2] && axis.push(this.g.axis(x + gutter, y + height - gutter, width - 2 * gutter, axminx, axmaxx, opts.axisxstep || Math.floor((width - 2 * gutter) / 20), 0));
+        +ax[3] && axis.push(this.g.axis(x + gutter, y + height - gutter, height - 2 * gutter, axminy, axmaxy, opts.axisystep || Math.floor((height - 2 * gutter) / 20), 1));
     }
     var lines = this.set(),
         symbols = this.set(),
