@@ -39,9 +39,10 @@ function TwoDDistribution(weight, mus, variances) {
 
         //return an array of n 2d vectors
         randn: function(n) {
+            var randn = NormalDistribution(1, 0);
             var a = [];
             for (i=0; i < n; i++) {
-                a.push([Math.random(), Math.random()]);
+                a.push([randn.sample(), randn.sample()]);
             }
             return a;
         },
@@ -60,6 +61,13 @@ function TwoDDistribution(weight, mus, variances) {
             }
 
             return x;
-        }
+        },
+
+        sample_full: function(n) {
+            var x = this.randn(n);
+            var cho = cholesky($M(this.variances));
+            return cho;
+        },
+            
     });
 }
