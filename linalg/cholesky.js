@@ -1,3 +1,38 @@
+//return an array of n 2d vectors
+function randn(n) {
+    var randn = NormalDistribution(1, 0);
+    var a = [];
+    for (i=0; i < n; i++) {
+        a.push([randn.sample(), randn.sample()]);
+    }
+    return $M(a);
+}
+
+function NormalDistribution(sigma, mu) {
+    return new Object({
+        sigma: sigma,
+        mu: mu,
+        //Box-Muller Transform
+        sample: function() {
+            var res;
+            if (this.storedDeviate) {
+                res = this.storedDeviate * this.sigma + this.mu;
+                this.storedDeviate = null;
+            } else {
+                var dist = Math.sqrt(-1 * Math.log(Math.random()));
+                var angle = 2 * Math.PI * Math.random();
+                this.storedDeviate = dist*Math.cos(angle);
+                res = dist*Math.sin(angle) * this.sigma + this.mu;
+            }
+            return res;
+        },
+        sampleInt : function() {
+            return Math.round(this.sample());
+        }
+    });
+}
+
+
 function cholesky(a){
     var n =a.rows();
     var el = a.dup(); //MUST NOT use = operator - need a new matrix here!
