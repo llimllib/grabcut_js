@@ -1,26 +1,3 @@
-function NormalDistribution(sigma, mu) {
-    return new Object({
-        sigma: sigma,
-        mu: mu,
-        sample: function() {
-            var res;
-            if (this.storedDeviate) {
-                res = this.storedDeviate * this.sigma + this.mu;
-                this.storedDeviate = null;
-            } else {
-                var dist = Math.sqrt(-1 * Math.log(Math.random()));
-                var angle = 2 * Math.PI * Math.random();
-                this.storedDeviate = dist*Math.cos(angle);
-                res = dist*Math.sin(angle) * this.sigma + this.mu;
-            }
-            return res;
-        },
-        sampleInt : function() {
-            return Math.round(this.sample());
-        }
-    });
-}
-
 /*
  * weight: number
  *   QQQ NOTE: what do the weights mean?
@@ -64,9 +41,17 @@ function TwoDDistribution(weight, mus, variances) {
         },
 
         sample_full: function(n) {
-            var x = this.randn(n);
-            var cho = cholesky($M(this.variances));
-            return cho;
+            var rands = randn(n);
+            var mva = $M(this.variances);
+            var mmus = $M(this.mus);
+            var l = cholesky(mva);
+            var r = l.x(rands.transpose());
+            for (i=0; i < n; i++) {
+                r.elements[0][i] += mmus.elements[0][0];
+                r.elements[1][i] += mmus.elements[1][0];
+            }
+
+            return r.transpose();
         },
             
     });
