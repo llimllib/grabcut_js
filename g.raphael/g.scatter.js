@@ -41,18 +41,12 @@ Raphael.fn.g.scatterplot = function (x, y, width, height, valuesx, valuesy, opts
         yshim = ydiff >= xdiff ? 0 : (xdiff - ydiff) / 2,
         miny = ydim.from - yshim,
         maxy = ydim.to + yshim,
-        gutter = opts.gutter || 10,
+        gutter = opts.gutter || 15,
         kx = (width - gutter * 2) / (maxx - minx),
         ky = (height - gutter * 2) / (maxy - miny);
 
     for (var i = 0, ii = valuesy.length; i < ii; i++) {
         len = Math.max(len, valuesy[i].length);
-    }
-    var shades = this.set();
-    for (var i = 0, ii = valuesy.length; i < ii; i++) {
-        if (opts.shade) {
-            shades.push(this.path().attr({stroke: "none", fill: colors[i], opacity: opts.nostroke ? 1 : .3}));
-        }
     }
     var axis = this.set();
     if (opts.axis) {
@@ -74,9 +68,6 @@ Raphael.fn.g.scatterplot = function (x, y, width, height, valuesx, valuesy, opts
             path = path.concat([j ? "L" : "M", X, Y]);
         }
         symbols.push(symset);
-        if (opts.shade) {
-            shades[i].attr({path: path.concat(["L", X, y + height - gutter, "L",  x + gutter + ((valuesx[i] || valuesx[0])[0] - minx) * kx, y + height - gutter, "z"]).join(",")});
-        }
     }
 
     function createDots(f) {
@@ -90,8 +81,8 @@ Raphael.fn.g.scatterplot = function (x, y, width, height, valuesx, valuesy, opts
                 f ? (C = {}) : cvrs.push(C = that.circle(X, Y, Math.abs(nearX - X) / 2).attr({stroke: "none", fill: "#000", opacity: 0}));
                 C.x = X;
                 C.y = Y;
-                C.value = valuesy[i][j];
-                C.shade = chart.shades[i];
+                C.valuex = valuesx[i][j];
+                C.valuey = valuesy[i][j];
                 C.symbol = chart.symbols[i][j];
                 C.symbols = chart.symbols[i];
                 C.axis = (valuesx[i] || valuesx[0])[j];
@@ -100,8 +91,7 @@ Raphael.fn.g.scatterplot = function (x, y, width, height, valuesx, valuesy, opts
         }
         !f && (dots = cvrs);
     }
-    chart.push(shades, symbols, axis, columns, dots);
-    chart.shades = shades;
+    chart.push(symbols, axis, columns, dots);
     chart.symbols = symbols;
     chart.axis = axis;
     chart.hover = function (fin, fout) {

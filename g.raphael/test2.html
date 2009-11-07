@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
     <head>
-        <title>gRaphaël Static Line Charts</title>
+        <title>gRaphaël Scatterplots</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="author" content="Dmitry Baranovskiy">
         <meta name="description" content="Charting JavaScript Library">
@@ -10,39 +10,59 @@
         <link rel="stylesheet" href="demo-print.css" type="text/css" media="print" charset="utf-8">
         <script src="raphael.js" type="text/javascript" charset="utf-8"></script>
         <script src="g.raphael.js" type="text/javascript" charset="utf-8"></script>
-        <script src="g.line.js" type="text/javascript" charset="utf-8"></script>
+        <script src="g.scatter.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript" charset="utf-8">
+            function NormalDistribution(sigma, mu) {
+                return new Object({
+                    sigma: sigma,
+                    mu: mu,
+                    //Box-Muller Transform
+                    sample: function() {
+                        var res;
+                        if (this.storedDeviate) {
+                            res = this.storedDeviate * this.sigma + this.mu;
+                            this.storedDeviate = null;
+                        } else {
+                            var dist = Math.sqrt(-1 * Math.log(Math.random()));
+                            var angle = 2 * Math.PI * Math.random();
+                            this.storedDeviate = dist*Math.cos(angle);
+                            res = dist*Math.sin(angle) * this.sigma + this.mu;
+                        }
+                        return res;
+                    },
+                    sampleInt : function() {
+                        return Math.round(this.sample());
+                    }
+                });
+            }
+
             window.onload = function () {
                 var r = Raphael("holder");
                 r.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
                 
-                var x = [], y = [], y2 = [], y3 = [];
-                for (var i = 0; i < 500; i++) {
-                    x[i] = i * 10;
-                    y[i] = (y[i - 1] || 0) + (Math.random() * 7) - 3;
-                    y2[i] = (y2[i - 1] || 150) + (Math.random() * 7) - 3.5;
-                    y3[i] = (y3[i - 1] || 300) + (Math.random() * 7) - 4;
+                var x = [], x2 = [], y = [], y2 = [], y3 = [];
+                var randn = NormalDistribution(1,0);
+                for (var i = 0; i < 300; i++) {
+                    x[i] = randn.sample() * 2;
+                    y[i] = randn.sample();
+                    if (!(i%2)) { x2[i/2] = randn.sample() * 4; y2[i/2] = randn.sample() * 3; }
+                    y3[i] = randn.sample() * 4;
                 }
 
-                r.g.text(160, 10, "Simple Line Chart");
-                r.g.text(480, 10, "shade = true");
-                r.g.text(160, 250, "shade = true & nostroke = true");
-                r.g.text(480, 250, "Symbols, axis and hover effect");
+                r.g.text(160, 10, "Simple Scatterplot");
+                r.g.text(480, 10, "Multiple data sets, all axes, large gutter");
+                r.g.text(160, 270, "no axes");
+                r.g.text(480, 270, "Symbols, axis and hover effect");
 
-                r.g.linechart(10, 10, 300, 220, x, [y, y2, y3]);
-                r.g.linechart(330, 10, 300, 220, x, [y, y2, y3], {shade: true});
-                r.g.linechart(10, 250, 300, 220, x, [y, y2, y3], {nostroke: true, shade: true});
-                var lines = r.g.linechart(330, 250, 300, 220, [[1, 2, 3, 4, 5, 6, 7],[3.5, 4.5, 5.5, 6.5, 7, 8]], [[12, 32, 23, 15, 17, 27, 22], [10, 20, 30, 25, 15, 28]], {nostroke: false, axis: "0 0 1 1", symbol: "o"}).hoverColumn(function () {
-                    this.tags = r.set();
-                    for (var i = 0, ii = this.y.length; i < ii; i++) {
-                        this.tags.push(r.g.tag(this.x, this.y[i], this.values[i], 160, 10).insertBefore(this).attr([{fill: "#fff"}, {fill: this.symbols[i].attr("fill")}]));
-                    }
+                r.g.scatterplot(10, 30, 300, 220, x, [y], {axis: "0 0 1 1"});
+                r.g.scatterplot(330, 30, 300, 220, [x, x2], [y, y2], {axis: "1 1 1 1", gutter: 40});
+                r.g.scatterplot(10, 270, 300, 220, x, [y]);
+                r.g.scatterplot(330, 270, 300, 220, [[1, 2, 3, 4, 5, 6, 7],[3.5, 4.5, 5.5, 6.5, 7, 8]], [[12, 32, 23, 15, 17, 27, 22], [10, 20, 30, 25, 15, 28]], {nostroke: false, axis: "0 0 1 1", symbol: "f", width: 5}).hover(function () {
+                    this.tag = this.tag || r.g.tag(this.x, this.y, this.valuex+","+this.valuey, 0, 5).insertBefore(this);
+                    this.tag.show();
                 }, function () {
-                    this.tags && this.tags.remove();
+                    this.tag && this.tag.hide();
                 });
-                // lines.lines[0].animate({"stroke-width": 6}, 1000);
-                // lines.symbols[0].attr({stroke: "#fff"});
-                // lines.symbols[0][1].animate({fill: "#f00"}, 1000);
             };
         </script>
     </head>
