@@ -69,6 +69,12 @@ function sh(values, dim) {
 /* TODO DELETEME DEBUGGING XXX */
 
 function gaussian_dist_sanity_check(canvas) {
+    //some interesting variance matrices:
+    // [[1,0],[0,1]]      #even scatter
+    // [[20,0],[0,1]]     #squished horizontally
+    // [[1,0],[0,20]]     #squished vertically
+    // [[2,-1],[-2,1]]    #diagonal left
+    // [[2,1],[-2,1]]     #diagonal right
     var weight = eval($("#weight").val());
     var mus = eval($("#mus").val());
     var vars = eval($("#vars").val());
@@ -84,8 +90,7 @@ function gaussian_dist_sanity_check(canvas) {
 
     r.remove();
     r = Raphael("gaussian", 500, 500);
-    opts = {nostroke: true, axis: "0 0 1 1", symbol: "o"}
-            //axminx: .8, axmaxx: 1.2, axminy: .8, axmaxy: 1.2};
+    opts = {}//{axis: "0 0 1 1"}
     r.g.scatterplot(40,0,400,400, xs, ys, opts);
 }
 
