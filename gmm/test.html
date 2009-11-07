@@ -9,7 +9,6 @@
 <script type="text/javascript">
 r = "";
 $(document).ready(function(){ 
-    //TODO: test with non-positive-symmetric matrices
     r = Raphael("gaussian", 500, 500);
     //normal_dist_sanity_check();
     //gaussian_dist_sanity_check(r);
@@ -29,11 +28,7 @@ function full_gaussian_dist_sanity_check(canvas) {
         xs.push(ss.elements[s][0]);
         ys.push(ss.elements[s][1]);
     }
-    //XXX TODO debugging deleteme
-    _xs = xs;
-    _ys = ys;
 
-    //TODO could do a scatter chart that accepts x,y pairs
     r.remove();
     r = Raphael("gaussian", 500, 500);
     var min = Math.min(Math.min.apply(null, xs), Math.min.apply(null, ys))
@@ -45,28 +40,6 @@ function full_gaussian_dist_sanity_check(canvas) {
             axminx:min, axmaxx: max, axminy: min, axmaxy: max};
     r.g.scatterplot(40,0,400,400, xs, ys, opts);
 }
-
-/* TODO DELETEME DEBUGGING XXX */
-function sh(values, dim) {
-    var k = values.length / dim,
-        l = k,
-        sum = 0,
-        res = [];
-    for (j=0; j < values.length; j++) {
-        console.log("k, l, sum, res, j: ", k, l, sum, res, j);
-        l--;
-        if (l < 0) {
-            sum += values[j] * (1 + l);
-            res.push(sum / k);
-            sum = values[j] * -l;
-            l += k;
-        } else {
-            sum += values[j];
-        }
-    }
-    return res;
-}
-/* TODO DELETEME DEBUGGING XXX */
 
 function gaussian_dist_sanity_check(canvas) {
     //some interesting variance matrices:
@@ -135,15 +108,11 @@ function normal_dist_sanity_check() {
     }
 
     var randn = NormalDistribution(1,0);
-    //var x = [];
-    //GLOBAL DEBUG DEELETEME
-    x = []
+    var x = [];
     for (var i=0; i < 10000; i++) {
         x.push(randn.sample());
     }
-    //var buckets = bucketize(x);
-    //GLOBAL DEBUG DEELETEME
-    buckets = bucketize(x);
+    var buckets = bucketize(x);
 
     plot_arr(buckets);
 }
