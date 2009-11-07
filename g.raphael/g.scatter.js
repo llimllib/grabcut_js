@@ -2,7 +2,7 @@
  * g.Raphael 0.4 - Charting library, based on Raphaël
  *
  * Copyright (c) 2009 Dmitry Baranovskiy (http://g.raphaeljs.com)
- * this file modified 2009 from Dmitry's g.line.js by Bill Mill
+ * this file created 2009 from Dmitry's g.line.js by Bill Mill
  * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
  */
 Raphael.fn.g.scatterplot = function (x, y, width, height, valuesx, valuesy, opts) {
@@ -23,22 +23,27 @@ Raphael.fn.g.scatterplot = function (x, y, width, height, valuesx, valuesy, opts
         dots = null,
         chart = this.set(),
         path = [],
-        minall = Math.min(Math.min.apply(Math, allx), Math.min.apply(Math, ally)),
-        maxall = Math.max(Math.max.apply(Math, allx), Math.max.apply(Math, ally)),
-        ///XXX: probably breaks if valuesx.length != valuesy.length. FIXME
-        //XXX: always sets the two axes to the same values
-        xdim = ydim = this.g.snapEnds(minall, maxall, valuesx[0].length - 1),
-        minx = xdim.from,
-        maxx = xdim.to,
+        minx_ = Math.min.apply(Math, allx),
+        maxx_ = Math.max.apply(Math, allx),
+        miny_ = Math.min.apply(Math, ally),
+        maxy_ = Math.max.apply(Math, ally),
+        xdim = this.g.snapEnds(minx_, maxx_, valuesx[0].length - 1),
+        ydim = this.g.snapEnds(miny_, maxy_, valuesy[0].length - 1),
+        //XXX: the invariant I'm trying to hold here is:
+        //     (xdim.to - xdim.from) == (ydim.to - ydim.from)
+        //     so I add half the difference of the larger one to the max of the smaller
+        //     and subtract half the difference of the smaller from the larger
+        xdiff = xdim.to - xdim.from,
+        ydiff = ydim.to - ydim.from,
+        xshim = xdiff >= ydiff ? 0 : (ydiff - xdiff) / 2,
+        minx = xdim.from - xshim,
+        maxx = xdim.to + xshim,
+        yshim = ydiff >= xdiff ? 0 : (xdiff - ydiff) / 2,
+        miny = ydim.from - yshim,
+        maxy = ydim.to + yshim,
         gutter = opts.gutter || 10,
         kx = (width - gutter * 2) / (maxx - minx),
-        miny = ydim.from,
-        maxy = ydim.to,
-        ky = (height - gutter * 2) / (maxy - miny),
-        axminx = opts.axminx || minx,
-        axmaxx = opts.axmaxx || maxx,
-        axminy = opts.axminy || miny,
-        axmaxy = opts.axmaxy || maxy;
+        ky = (height - gutter * 2) / (maxy - miny);
 
     for (var i = 0, ii = valuesy.length; i < ii; i++) {
         len = Math.max(len, valuesy[i].length);
@@ -53,9 +58,9 @@ Raphael.fn.g.scatterplot = function (x, y, width, height, valuesx, valuesy, opts
     if (opts.axis) {
         var ax = (opts.axis + "").split(/[,\s]+/);
         +ax[0] && axis.push(this.g.axis(x + gutter, y + gutter, width - 2 * gutter, minx, maxx, opts.axisxstep || Math.floor((width - 2 * gutter) / 20), 2));
-        +ax[1] && axis.push(this.g.axis(x + width - gutter, y + height - gutter, height - 2 * gutter, axminy, axmaxy, opts.axisystep || Math.floor((height - 2 * gutter) / 20), 3));
-        +ax[2] && axis.push(this.g.axis(x + gutter, y + height - gutter, width - 2 * gutter, axminx, axmaxx, opts.axisxstep || Math.floor((width - 2 * gutter) / 20), 0));
-        +ax[3] && axis.push(this.g.axis(x + gutter, y + height - gutter, height - 2 * gutter, axminy, axmaxy, opts.axisystep || Math.floor((height - 2 * gutter) / 20), 1));
+        +ax[1] && axis.push(this.g.axis(x + width - gutter, y + height - gutter, height - 2 * gutter, miny, maxy, opts.axisystep || Math.floor((height - 2 * gutter) / 20), 3));
+        +ax[2] && axis.push(this.g.axis(x + gutter, y + height - gutter, width - 2 * gutter, minx, maxx, opts.axisxstep || Math.floor((width - 2 * gutter) / 20), 0));
+        +ax[3] && axis.push(this.g.axis(x + gutter, y + height - gutter, height - 2 * gutter, miny, maxy, opts.axisystep || Math.floor((height - 2 * gutter) / 20), 1));
     }
     var symbols = this.set();
     for (var i = 0, ii = valuesy.length; i < ii; i++) {
